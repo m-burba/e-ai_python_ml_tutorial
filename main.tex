@@ -1,0 +1,120 @@
+\documentclass[11pt,oneside]{book} % Standard book format with 10pt font
+
+\input{e-ai_tutorial_packages}
+
+%==============================================================================
+%
+%
+%==============================================================================
+\begin{document}
+
+%-------------------------------
+% Front Matter: Title Page
+%-------------------------------
+\frontmatter
+\begin{titlepage}
+	\begin{flushright}
+    \includegraphics[width=0.3\textwidth]{images/DWD-Logo_2013.svg.png}
+	\end{flushright}
+
+  \centering
+  % DWD Logo (ensure the file exists in the working directory)
+  %\includegraphics[width=0.4\textwidth]{Deutscherwetterdienst-logo.svg.png}\\[1cm]
+	\vspace{4cm}
+  
+  {\Huge\bfseries Python and Machine Learning for Weather, Climate and Environment \par}
+  \vspace{1cm}
+  
+  {\Large\bfseries Tutorial and Guide\par}
+  \vspace{2cm}
+  
+  {\Large Roland Potthast \par 
+	
+	with contributions by Stefanie Hollborn, Jan Keller, Thomas Deppisch, Mareike Burba, Matthias Mages, Sarah Heibutzki, Marek Jacob, Florian Prill, Tobias Göcke \par}
+  \vfill
+  {\Large \today\par}
+\end{titlepage}
+
+\tableofcontents
+
+\frontmatter
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\thechapter\Roman{section}} % Removes extra dot
+
+\input{chapters/ch00} % Basic Python, Environments, Modules, Core Language
+
+% Reset numbering after Introduction
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+
+%-------------------------------
+% Main Matter: Chapters
+%-------------------------------
+\mainmatter
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Day 1: Python as Workhorse}}
+
+\input{chapters/ch01} % Basic Python, Environments, Modules, Core Language
+\input{chapters/ch02} % Jupyter Notebooks, Clouds and Servers
+\input{chapters/ch03} % eccodes, netcdf, fields and maps
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Day 2: AI/ML Basic Introduction}}
+
+\input{chapters/ch04} % ML Basics, PyTorch
+\input{chapters/ch05} % 
+\input{chapters/ch06} % 
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Day 3: LLM RAG, Python Packages, Multi-Modality}}
+
+\input{chapters/ch07} %
+\input{chapters/ch08} %
+\input{chapters/ch09} %
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Day 4: GPUs, AI Agents, Services and Impact}}
+
+\input{chapters/ch10} %
+\input{chapters/ch11} %
+\input{chapters/ch12} %
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Day 5: LLM Maturity and Operations}}
+
+\input{chapters/ch13} %
+\input{chapters/ch14} %
+\input{chapters/ch15} %
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Day 6: AI Model and AI Data Assimilation}}
+
+\input{chapters/ch16} %
+\input{chapters/ch17} %
+\input{chapters/ch18} %
+
+\addtocontents{toc}{\noindent\hrulefill\vspace{-1.5ex}\par}
+\addcontentsline{toc}{chapter}{\textcolor{dwdspecial}{\large Appendix}}
+\input{chapters/appendix01} %
+
+% Initial Announcement
+%
+% April 14-16, Conference Area Blue at DWD (KB Blau)
+%    April 14, Day 1: Python Setup, Jupyter, Basics, netcdf, eccodes, graphics, maps
+%    April 15, Day 2: ML Basics, torch, data loader, optizer, training, Zarr, gpnl
+%    April 16, Day 3: Package Hierarchies, xarray, pyICON, ...
+
+% May 26-28, Gartensaal at DWD
+%    May 26,   Day 4: Python Review and Repetition from Days 1 and 3, Special Packages
+%    May 27,   Day 5: ML Special Topics, ML-Flow, LLM, Fine-Tuning, ...
+%    May 28,   Day 6: AICON, AIDA and Anemoi
+
+%-------------------------------
+% Back Matter: Appendix or Additional Content
+%-------------------------------
+\backmatter
+\chapter*{Appendix}
+\lipsum[1-2] % Dummy text for the appendix
+
+\end{document}

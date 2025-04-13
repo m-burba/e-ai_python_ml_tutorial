@@ -1,0 +1,37 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{colortbl}
+\usepackage{longtable}
+
+% Define colors
+\definecolor{lightblue}{RGB}{220,230,241}
+\definecolor{headerblue}{RGB}{180,200,230}
+
+% Fix for \g__tbl_row_int error in some LaTeX engines (like MiKTeX)
+\makeatletter
+\providecommand{\g__tbl_row_int}{0}
+\makeatother
+
+\begin{document}
+
+\section*{Test Longtable with Colored Rows}
+
+\begin{longtable}{|c|c|}
+\hline
+\rowcolor{headerblue} \textbf{Column 1} & \textbf{Column 2} \\
+\hline
+\endhead
+\rowcolor{lightblue} A & B \\
+\hline
+C & D \\
+\hline
+\rowcolor{lightblue} E & F \\
+\hline
+G & H \\
+\hline
+\end{longtable}
+
+\end{document}
+

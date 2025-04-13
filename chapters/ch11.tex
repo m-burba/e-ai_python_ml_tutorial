@@ -1,0 +1,195 @@
+
+\chapter{Agents and Coding with LLM}
+
+\section{Introduction to Automated Coding with LLM}
+Large Language Models (LLMs) can be leveraged to assist in writing code, generating scripts, and automating tasks. This section introduces a simple example where we generate Python code, save it, and execute it dynamically.
+
+\subsection{Generating and Executing Code from an LLM}
+To interact with an LLM and generate code, we can use OpenAI’s API. Below is an example of how to generate, save, and execute Python code.
+
+\begin{codeonly}{Generating and Running Python Code from LLM}
+import openai
+import os
+
+def get_code_from_llm(prompt):
+    client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are an AI coder. Provide only executable Python code."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message.content.strip()
+
+code = get_code_from_llm("Write a Python function that computes the Fibonacci sequence up to n.")
+
+# Save code to a file
+with open("generated_script.py", "w") as f:
+    f.write(code)
+
+# Execute the script
+exec(open("generated_script.py").read())
+\end{codeonly}
+
+\section{Survey of Agent Frameworks}
+There are several agent-based frameworks that integrate LLMs for code execution and automation. Two common ones include:
+
+\begin{itemize}
+\item
+{\bf LangChain}: A framework designed for building applications with LLMs that integrate memory, reasoning, and chaining capabilities.
+\item
+{\bf Auto-GPT}: An autonomous agent framework that can self-prompt, plan, and execute tasks using LLMs.
+\end{itemize}
+
+\section{Example 1: Using LangChain for Code Execution}
+LangChain provides tools to let LLMs execute tasks dynamically, such as writing and running Python code.
+
+\subsection{Installation}
+Install LangChain and OpenAI API:
+
+\begin{codeonly}{Installing LangChain}
+!pip install langchain openai
+\end{codeonly}
+
+\subsection{Using LangChain to Automate Code Execution}
+
+\begin{codeonly}{LangChain Script for Automated Coding}
+from langchain.llms import OpenAI
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+import openai
+
+# Define the prompt template
+prompt_template = PromptTemplate.from_template("""
+Write a Python script that fetches a 2m temperature field from DWD open data and plots it.
+""")
+
+# Initialize the LLM
+llm = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+chain = LLMChain(llm=llm, prompt=prompt_template)
+
+# Get generated code
+code = chain.run("")
+
+# Save and execute
+with open("generated_weather_script.py", "w") as f:
+    f.write(code)
+exec(open("generated_weather_script.py").read())
+\end{codeonly}
+
+\section{Example 2: Using Auto-GPT to Automate Tasks}
+Auto-GPT is an advanced framework for autonomous coding agents. We set it up and use it to generate and run Python scripts.
+
+\subsection{Installation}
+
+\begin{codeonly}{Installing Auto-GPT}
+!git clone https://github.com/Torantulino/Auto-GPT.git
+!cd Auto-GPT && pip install -r requirements.txt
+\end{codeonly}
+
+\subsection{Using Auto-GPT to Generate and Execute Code}
+
+\begin{codeonly}{Auto-GPT Code Execution}
+from autogpt.agent import AutoGPT
+
+auto_gpt = AutoGPT(api_key=os.getenv("OPENAI_API_KEY"))
+
+response = auto_gpt.run_task("Fetch a 2m temperature field from DWD open data and display it with Matplotlib and Cartopy.")
+
+print("Generated Code:")
+print(response)
+\end{codeonly}
+
+\section{Generated Code: Fetching and Plotting a 2m Temperature Field}
+Once the agent generates the code, we execute it to visualize the data.
+
+\begin{codeonly}{Fetching and Plotting 2m Temperature from DWD}
+import eccodes
+import numpy as np
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import requests
+import os
+
+# Download GRIB file
+url = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/00/t_2m.grib2"
+response = requests.get(url)
+with open("temperature.grib2", "wb") as f:
+    f.write(response.content)
+
+# Read GRIB data
+with open("temperature.grib2", "rb") as f:
+    gid = eccodes.codes_grib_new_from_file(f)
+    values = eccodes.codes_get_values(gid)
+    latitudes = eccodes.codes_get_array(gid, "latitudes")
+    longitudes = eccodes.codes_get_array(gid, "longitudes")
+    eccodes.codes_release(gid)
+
+# Reshape data
+grid_shape = (int(np.sqrt(len(values))), int(np.sqrt(len(values))))
+values = values.reshape(grid_shape)
+latitudes = latitudes.reshape(grid_shape)
+longitudes = longitudes.reshape(grid_shape)
+
+# Plot temperature field
+plt.figure(figsize=(10, 6))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.contourf(longitudes, latitudes, values, cmap="coolwarm")
+plt.colorbar(label="2m Temperature (degreeC)")
+ax.coastlines()
+plt.title("2m Temperature from DWD Open Data")
+plt.show()
+\end{codeonly}
+
+This section demonstrates how to use LLMs and agent frameworks to generate, execute, and visualize weather data from DWD OpenData.
+
+\section{Building a Vector Database as Package}
+
+We'll structure your package as follows:
+
+\begin{verbatim}
+faiss_query_tool/
+|-- faiss_query_tool/          # Main package folder
+|   |-- code-ch01-sec02-code-ch01-sec02-__init__.py
+|   |-- code-ch14-sec01-code-ch14-sec01-loader.py              # Handles document loading
+|   |-- code-ch14-sec01-code-ch14-sec01-embeddings.py          # Handles embedding model
+|   |-- code-ch14-sec01-code-ch14-sec01-faiss_index.py         # Handles FAISS index
+|   |-- code-ch14-sec01-code-ch14-sec01-query.py               # Querying functionality
+|   |-- code-ch14-sec01-code-ch14-sec01-openai_chat.py         # OpenAI integration
+|-- tests/                     # Test scripts
+|-- code-ch01-sec02-code-ch01-sec02-setup.py                   # Package metadata and installation
+|-- README.md                  # Documentation
+|-- requirements.txt           # Required dependencies
+\end{verbatim}
+
+
+\subsection{Load files into Vector Database}
+
+We first build a loader
+
+%\includeexternalcode{faiss\_query\_tool/code\_files/code-ch14-sec01-faiss-vector-db.py}{faiss_query_tool/code_files/code-ch14-sec01-faiss-vector-db.py}
+
+
+%\includeexternalcode{faiss\_query\_tool/code\_files/code-ch14-sec01-generate-text-embedding.py}{faiss_query_tool/code_files/code-ch14-sec01-generate-text-embedding.py}
+
+
+%\includeexternalcode{faiss\_query\_tool/code\_files/code-ch14-sec01-faiss-vector-db.py}{faiss_query_tool/code_files/code-ch14-sec01-faiss-vector-db.py}
+
+
+%\includeexternalcode{faiss\_query\_tool/code\_files/code-ch14-sc01-faiss-vector-db.py}{faiss_query_tool/code_files/code-ch14-sec01-faiss-vector-db.py}
+
+
+%\includeexternalcode{faiss\_query\_tool/code\_files/code-ch14-sec01-faiss-vector-db.py}{faiss_query_tool/code_files/code-ch14-sec01-faiss-vector-db.py}
+
+
+%\includeexternalcode{faiss\_query\_tool/code\_files/code-ch14-sec01-faiss-vector-search-tool.py}{faiss_query_tool/code_files/code-ch14-sec01-faiss-vector-search-tool.py}
+
+
+\subsection{Installation of your package}
+
+In the root directory of your package, run
+
+\begin{codeonly}{Installation}
+pip install .
+\end{codeonly}

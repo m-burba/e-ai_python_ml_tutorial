@@ -1,0 +1,49 @@
+# LaTeX intermediate files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.xdv
+main.listing
+
+# keys
+.env
+
+# no jupyter checkpoints
+.ipynb_checkpoints
+
+# LaTeX build files
+*.dvi
+*.ps
+*.eps
+
+# Backup files
+*~
+*.bak
+*.tmp
+*.swp
+
+# Other temporary files
+*.run.xml
+
+# Editor-specific files (e.g., TeXstudio, Vim)
+*.synctex
+*.fls
+
+# Directory for build outputs (if you use one)
+build/
+
+*.tcp
+*.tps
+
