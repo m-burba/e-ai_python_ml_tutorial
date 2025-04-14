@@ -92,6 +92,8 @@ python3 -m venv myenv
 source myenv/bin/activate
 \end{codeonly}
 
+This will create a \texttt{myenv} direcotry with the default venv file structure. \texttt{myenv} is the freely choosable name of the venv.  
+
 \subsection{Using \texttt{pip} to Manage Python Packages}
 
 \noindent \texttt{pip} is the package installer for Python. It allows you to install, update, and manage packages from the Python Package Index (PyPI). For example, you can check the version of \texttt{pip}, list installed packages, and install popular packages like \texttt{numpy} and \texttt{matplotlib}. The following commands illustrate these basic operations:
@@ -178,8 +180,8 @@ You can import Python modules or functions directly from local \texttt{.py} file
 
 In \texttt{main\_greetings.py}, you can import from \texttt{greetings.py} as follows:
 
-\begin{codeonly}{greetings.py}
-# main.py
+\begin{codeonly}{main_greetings.py}
+# main_greetings.py
 from greetings import say_hello
 
 say_hello()
