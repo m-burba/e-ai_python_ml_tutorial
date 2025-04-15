@@ -563,6 +563,86 @@ Proper tensor management ensures that PyTorch can fully automate gradient comput
 Use the sine approximation as generic example, what AI/ML approximators do. Nonlinear mappings are approximated. Scaling this to a huge space, very high-dimensional non-linear mappings like language generation or weather prediction are approximated. 
 \end{recommendationbox}
 
+
+%==============================================================================
+%
+%==============================================================================
+\subsection{Understanding the PyTorch \texttt{DataLoader} with and without Shuffling}
+
+The \texttt{DataLoader} in PyTorch is used to load data in batches, which is particularly useful for training models efficiently. To explore how it works, we create a synthetic dataset where the features in each row encode their row and column positions explicitly, making the effect of shuffling easy to observe.
+
+We first define a tensor \texttt{X} of shape $100 \times 10$, where each element is set to its row index plus a column offset. The labels \texttt{y} are simply the integers from 1 to 100.
+
+\begin{codeonly}{Creating Structured Data for DataLoader}
+import torch
+from torch.utils.data import TensorDataset, DataLoader
+
+# Create data: 100 rows, 10 columns with visible row and column info
+X = torch.zeros(100, 10, dtype=torch.float32)
+for i in range(100):
+    for j in range(10):
+        X[i, j] = (i + 1) + (j / 10)
+print(X[:10,:])
+
+# Labels: y = 1 to 100
+y = torch.arange(1, 101, dtype=torch.float32).reshape(-1, 1)
+\end{codeonly}
+
+We then wrap the data in a \texttt{TensorDataset} and pass it to a \texttt{DataLoader} with batch size 4 and no shuffling. This means that the data will be returned in sequential order.
+
+\begin{codeonly}{DataLoader without Shuffling}
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=4, shuffle=False)
+
+# Print the first batch with one decimal digit
+print("First batch (1 digit precision):")
+for batch_X, batch_y in loader:
+    for i in range(len(batch_X)):
+        x_row = [f"{v:.1f}" for v in batch_X[i]]
+        y_val = f"{batch_y[i].item():.1f}"
+        print(f"x = {x_row}, y = {y_val}")
+    break
+\end{codeonly}
+
+The output of this batch shows that the first 4 rows are returned in order:
+
+\begin{verbatim}
+First batch (1 digit precision):
+x = ['1.0', '1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9'], y = 1.0
+x = ['2.0', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9'], y = 2.0
+x = ['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9'], y = 3.0
+x = ['4.0', '4.1', '4.2', '4.3', '4.4', '4.5', '4.6', '4.7', '4.8', '4.9'], y = 4.0
+\end{verbatim}
+
+Now we repeat the same process, but enable shuffling in the \texttt{DataLoader}. This causes the rows to be returned in random order at the start of each epoch.
+
+\begin{codeonly}{DataLoader with Shuffling}
+loader2 = DataLoader(dataset, batch_size=4, shuffle=True)
+
+# Print the first batch with one decimal digit
+print("First batch (1 digit precision):")
+for batch_X, batch_y in loader2:
+    for i in range(len(batch_X)):
+        x_row = [f"{v:.1f}" for v in batch_X[i]]
+        y_val = f"{batch_y[i].item():.1f}"
+        print(f"x = {x_row}, y = {y_val}")
+    break
+\end{codeonly}
+
+This will now print a different (random) batch each time the code is run. For example:
+
+\begin{verbatim}
+First batch (1 digit precision):
+x = ['91.0', '91.1', ..., '91.9'], y = 91.0
+x = ['39.0', '39.1', ..., '39.9'], y = 39.0
+x = ['61.0', '61.1', ..., '61.9'], y = 61.0
+x = ['10.0', '10.1', ..., '10.9'], y = 10.0
+\end{verbatim}
+
+This clear example demonstrates how the PyTorch \texttt{DataLoader} works and how shuffling can be used to randomize input order during training.
+
+
+
 %==============================================================================
 %
 %==============================================================================

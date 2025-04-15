@@ -1086,4 +1086,88 @@ def plot_height_histogram(lons, heights,
 \end{codeonly}
 
 
+\subsection{Plotting Scalar Fields on ICON Triangular Grids}
+
+To visualize ICON model output fields on the native triangular grid, we combine the triangular mesh geometry from the ICON grid file with field values from the forecast GRIB file. This allows for accurate visualization of quantities such as temperature or land-sea mask using the \texttt{matplotlib} and \texttt{cartopy} libraries.
+
+We demonstrate the full process below using the land-sea mask field \texttt{lsm} as an example.
+
+\subsubsection*{Reading the ICON Grid}
+
+The ICON grid file contains the geographical coordinates of each triangle vertex (\texttt{vlon}, \texttt{vlat}) and the connectivity table (\texttt{vertex\_of\_cell}) defining which three vertices form each triangle.
+
+\begin{codeonly}{Reading the ICON Grid File}
+import numpy as np
+import matplotlib.tri as mtri
+import netCDF4 as nc
+
+gridfile = "icon_grid_0043_R02B04_G.nc"
+print('Reading grid file:', gridfile)
+
+with nc.Dataset(gridfile) as f:
+    vlon = f['vlon'][:] * 180 / np.pi
+    vlat = f['vlat'][:] * 180 / np.pi
+    vertex_of_cell = f['vertex_of_cell'][:] - 1  # convert from 1-based to 0-based indexing
+
+    triangulation = mtri.Triangulation(vlon, vlat, vertex_of_cell.T)
+\end{codeonly}
+
+\subsubsection*{Extracting Forecast Data from the GRIB File}
+
+Forecast fields are read from a GRIB file using the \texttt{eccodes} interface. We use a helper function to extract the field matching a given short name:
+
+\begin{codeonly}{Extracting Field from GRIB}
+import eccodes
+
+def extract_values(grib_file, sname):
+    with open(grib_file, 'rb') as f:
+        while True:
+            gid = eccodes.codes_grib_new_from_file(f)
+            if gid is None:
+                break
+
+            short_name = eccodes.codes_get(gid, "shortName")
+            if short_name == sname:
+                values = eccodes.codes_get_array(gid, "values")
+                eccodes.codes_release(gid)
+                return values
+
+            eccodes.codes_release(gid)
+
+    raise ValueError(f"shortName '{sname}' not found in {grib_file}")
+\end{codeonly}
+
+\begin{codeonly}{Reading the Field Data}
+valfile = "fc_R02B04.2022010100"
+values = extract_values(valfile, "lsm")  # land-sea mask
+\end{codeonly}
+
+\subsubsection*{Plotting the Field with Cartopy}
+
+We use \texttt{cartopy} to overlay the triangulated scalar field on a map. The values are visualized using \texttt{tripcolor}, with a colorbar for interpretation.
+
+\begin{codeonly}{Plotting the ICON Triangular Field}
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+
+fig, ax = plt.subplots(figsize=(10, 5), subplot_kw={'projection': ccrs.PlateCarree()})
+
+# Plot the scalar field on the triangulated grid
+tpc = ax.tripcolor(triangulation, facecolors=values, cmap='viridis', shading='flat')
+
+# Add map features
+ax.coastlines()
+ax.set_title("ICON Land-Sea Mask (triangular grid)")
+plt.colorbar(tpc, ax=ax, shrink=0.8, label="Land-Sea Mask")
+
+plt.savefig("images/icon_lsm_plot.png")
+plt.show()
+\end{codeonly}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{images/icon_lsm_plot.png}
+\end{center}
+
+This method can be applied to any scalar field available in the forecast file, such as surface temperature (\texttt{T\_G}) or wind speed components (\texttt{10u}, \texttt{10v}). The same triangulation can be reused for all variables defined per triangle. The scripts will also work if fields are defined on triangle vertices, tripcolor is quite powerful.
+
 

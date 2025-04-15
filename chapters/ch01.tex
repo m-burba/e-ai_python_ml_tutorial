@@ -130,7 +130,7 @@ pip freeze > requirements.txt
 
 This creates a file named \texttt{requirements.txt} in your current working directory containing all installed packages and their versions, leading to e.g.\ the following simple requirements.txt file. 
 
-\begin{codeonly}{Requirements.txt}
+\begin{codeonly}{Requirements.txt example}
 numpy==1.26.4
 ollama==0.3.1
 openai==1.69.0
@@ -178,9 +178,9 @@ You can import Python modules or functions directly from local \texttt{.py} file
 |-- greetings.py
 \end{lstlisting}
 
-In \texttt{main\_greetings.py}, you can import from \texttt{greetings.py} as follows:
+In \textnormal{\texttt{main\_greetings.py}}, you can import from \texttt{greetings.py} as follows:
 
-\begin{codeonly}{main_greetings.py}
+\begin{codeonly}{main\_greetings.py}
 # main_greetings.py
 from greetings import say_hello
 
