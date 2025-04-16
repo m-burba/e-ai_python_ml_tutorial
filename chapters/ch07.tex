@@ -675,14 +675,14 @@ def search_google(query, api_key, search_engine_id, num_results=5):
     response = requests.get(url)
 
     if response.status_code != 200:
-        print(f"❌ Error: {response.status_code} - {response.text}")
+        print(f"Error: {response.status_code} - {response.text}")
         return []
 
     data = response.json()
     results = []
 
     if "items" in data:
-        print(f"\n🔍 Search Results for: '{query}' (Top {num_results})")
+        print(f"\nSearch Results for: '{query}' (Top {num_results})")
         print("=" * 60)
 
         for i, item in enumerate(data["items"], start=1):
@@ -692,8 +692,8 @@ def search_google(query, api_key, search_engine_id, num_results=5):
             results.append(link)  # Only store the links for scraping
 
             # Display retrieved links
-            print(f"📌 **Result {i}:** {title}")
-            print(f"   🔗 {link}")
+            print(f"**Result {i}:** {title}")
+            print(f"{link}")
             print("-" * 60)
 
     return results

@@ -178,7 +178,7 @@ print(result.x)
 \section{Scikit-Learn - Machine Learning, Classifiation, Regression}
 Scikit-learn is a machine learning library that provides tools for classification, regression, clustering, and preprocessing.
 
-\subsection{Fitting a Linear Model}
+\subsection{Fitting a Linear Model and Clustering Algorithms}
 
 \begin{codeonly}{Linear Regression with Scikit-Learn}
 from sklearn.linear_model import LinearRegression
@@ -191,3 +191,53 @@ model = LinearRegression()
 model.fit(X, y)
 print("Predictions:", model.predict(X))
 \end{codeonly}
+
+The notebook \texttt{scikit-learn\_cth\_clustering.ipynb} provides a compact demonstration of hierarchical clustering on synthetic cloud top height (CTH) data. It uses agglomerative clustering to group similar CTH profiles and evaluates the results visually.
+
+\begin{enumerate}[label=\textbf{Step \arabic*:}, leftmargin=2cm]
+
+\item \textbf{Dataset Preparation:} The notebook loads or generates sample data representing CTH structures. These are likely extracted from satellite or model fields, reshaped into 1D or 2D patterns suitable for clustering.
+
+\item \textbf{Hierarchical Clustering:} Using \texttt{AgglomerativeClustering} from \texttt{scikit-learn}, the notebook clusters the CTH patterns into a small number of representative types. This helps identify structural differences in convective growth.
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/cth_clusters_ordered.png}
+    \captionof{figure}{Clustered convective profiles, sorted and labeled.}
+\end{center}
+
+\item \textbf{Comparison of Results:} To validate the clustering, side-by-side comparisons are made showing original vs. clustered versions, or showing cluster representatives.
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/cth_comparison_side_by_side.png}
+    \captionof{figure}{Side-by-side comparison of original and clustered convective patterns.}
+\end{center}
+
+\item \textbf{Visual Interpretation:} The notebook further evaluates clusters by plotting their motion and structure. For example, flow vectors and growth regions may be overlaid.
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/cth_motion_vectors.png}
+    \captionof{figure}{Estimated motion vectors over convective regions.}
+\end{center}
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/cth_convective_growth.png}
+    \captionof{figure}{Identification of regions with rapid vertical growth in CTH.}
+\end{center}
+
+\item \textbf{Map-Based Output:} Final outputs show maps of maximum change, differences, and derived quantities based on the clustering.
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/cth_max_change_map.png}
+    \captionof{figure}{Map showing maximum CTH changes across the domain.}
+\end{center}
+
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{images/cth_difference_map.png}
+    \captionof{figure}{Difference map between cluster means and actual values.}
+\end{center}
+
+\end{enumerate}
+
+The combination of clustering and visualization in this notebook provides insight into common convective structures, their dynamics, and how they evolve over time.
+
+
