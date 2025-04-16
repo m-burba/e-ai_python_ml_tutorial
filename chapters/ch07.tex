@@ -624,3 +624,150 @@ Referenced Files: ai_tutorial.pdf - Page 5: ai_tutorial.pdf ai_tutorial.pdf - Pa
 \end{lstlisting}
 
 In general, chunking and decomposition of the material into good and adequate parts is a very important part of the whole process. The LLM has limited context size and using the right information is a crucial part of answering a query or taking part in a discussion. 
+
+%==============================================================================
+%
+%==============================================================================
+\section{End-to-End AI-Powered Answer Pipeline}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/AI_Centre_Client_Server_Architecture.png}
+  \caption{Client-server architecture for AI-powered search and answer generation.}
+  \label{fig:ai-architecture}
+\end{figure}
+
+
+This section explains the primary components of a pipeline that combines Google search, web scraping, and a Large Language Model (LLM) to generate context-aware answers from real-time web data.
+
+\textbf{Overview:}
+\begin{itemize}
+\item \texttt{google\_search}: queries Google Custom Search to retrieve relevant URLs.
+\item \texttt{scrape\_website}: fetches content from the found websites.
+\item \texttt{generate\_answer}: sends a prompt to OpenAI's GPT model for generating answers.
+\item \texttt{answer\_from\_google}: coordinates the complete process end-to-end.
+\end{itemize}
+
+
+This section provides a structured explanation of each core function used in the pipeline that combines Google search, web scraping, and language model-based answering.
+
+\paragraph{\texttt{search\_google}}
+This function uses the Google Custom Search API to perform a web search for a given query. It takes as input the query string, a valid API key, a Custom Search Engine ID, and the desired number of results. If the request is successful, it parses the JSON response and extracts the top result URLs along with their titles. It also prints a nicely formatted list of these results for reference. If the request fails, an error message is printed and an empty list is returned.
+
+\paragraph{\texttt{scrape\_website}}
+This function fetches the content of a given URL using a standard HTTP GET request with a browser-like user agent. It parses the response HTML using \texttt{BeautifulSoup} and extracts up to 15 paragraph elements (\texttt{<p>}) to form a readable body of text. If no paragraph content is found or an error occurs during the request, a fallback message is returned.
+
+\paragraph{\texttt{generate\_answer}}
+This function sends a prompt to the OpenAI GPT API (using model \texttt{gpt-4o-mini}) to generate a natural language answer. It initializes the OpenAI client using the provided API key, structures the input as a chat-like conversation with a system and a user message, and returns the generated content from the assistant. This encapsulates the language generation capabilities of the model.
+
+\paragraph{\texttt{answer\_from\_google}}
+This is the main orchestration function that integrates the other components. It performs the full pipeline: searching Google, scraping the top URLs, formatting the content, and sending it to the LLM for summarization and answering. The function constructs a prompt that includes the original query and the concatenated extracted text from multiple sources, and then calls \texttt{generate\_answer} to retrieve the final result.
+
+\textbf{Code Implementation:}
+\begin{codeonly}{ai search pipeline}
+import requests
+from bs4 import BeautifulSoup
+import openai
+
+# Function to perform a Google Search and return top result URLs
+def search_google(query, api_key, search_engine_id, num_results=5):
+    url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num={num_results}"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        print(f"❌ Error: {response.status_code} - {response.text}")
+        return []
+
+    data = response.json()
+    results = []
+
+    if "items" in data:
+        print(f"\n🔍 Search Results for: '{query}' (Top {num_results})")
+        print("=" * 60)
+
+        for i, item in enumerate(data["items"], start=1):
+            title = item.get("title", "No Title")
+            link = item.get("link", "No Link")
+
+            results.append(link)  # Only store the links for scraping
+
+            # Display retrieved links
+            print(f"📌 **Result {i}:** {title}")
+            print(f"   🔗 {link}")
+            print("-" * 60)
+
+    return results
+
+# Function to scrape full text from a webpage
+def scrape_website(url):
+    try:
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Extract paragraphs
+        paragraphs = soup.find_all("p")
+        content = "\n".join([p.get_text() for p in paragraphs[:15]])  # Extract first 15 paragraphs
+
+        return content if content else "No content extracted."
+    except Exception as e:
+        return f"Failed to scrape {url}: {e}"
+
+# Function to generate an answer using OpenAI API
+def generate_answer(prompt, llm_api_key):
+    client = openai.OpenAI(api_key=llm_api_key)
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "system", "content": "You are a helpful AI assistant."},
+                  {"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content
+
+# Main function that integrates Google Search, Web Scraping, and LLM Answering
+def answer_from_google(query, api_key, search_engine_id, llm_api_key, num_results=3):
+    urls = search_google(query, api_key, search_engine_id, num_results)
+
+    extracted_content = []
+    for url in urls:
+        content = scrape_website(url)
+        extracted_content.append(f"\n--- Source: {url} ---\n{content}")
+
+    # Combine all extracted content for LLM input
+    full_text = "\n\n".join(extracted_content)
+
+    prompt = f"Summarize the following content and answer the question: {query}\n\n{full_text}"
+
+    return generate_answer(prompt, llm_api_key)
+
+# Example usage:
+API_KEY = SERPAPI_KEY  # Correct Google API Key
+SEARCH_ENGINE_ID = search_engine_id  # Custom Search Engine ID
+
+query = "Tell me about EUMETNET Artificial Intelligence Programme"
+answer = answer_from_google(query, API_KEY, SEARCH_ENGINE_ID, LLM_API_KEY, num_results=3)
+\end{codeonly}
+
+
+\begin{codeonly}{display}
+ from IPython.display import display, Markdown
+display(Markdown(answer))
+\end{codeonly}
+
+\textbf{Sample Output:}
+\begin{lstlisting}[language=]
+The EUMETNET Artificial Intelligence (AI) Programme, launched in January 2024, is a collaborative initiative that brings together 16 National Meteorological and Hydrological Services (NMHSs) within Europe, along with ECMWF (European Centre for Medium-Range Weather Forecasts) and EUMETSAT (European Organisation for the Exploitation of Meteorological Satellites). Managed by Prof. Dr. Roland Potthast from the German National Meteorological Service (DWD), the program spans five years and is structured into three main components focusing on Weather, Climate, and Environmental Applications.
+
+Key components of the program include:
+
+Data Curation and Products: Leveraging satellite data and meteorological observations.
+Analysis, Modelling, and Ensembles: Involving extensive modeling and forecasting initiatives.
+Communication and Training: This includes a series of workshops aimed at fostering collaboration among meteorological services, with the first workshop scheduled for June 5-6, 2024.
+The program is designed to enhance AI applications in meteorology by exploring innovative techniques that allow for enhanced weather predictions, particularly for complex events, through the rapid analysis of vast amounts of meteorological data. AI and Machine Learning (ML) are seen as tools for creating more accurate and personalized weather forecasts while also enabling advanced simulations for climate modeling.
+
+EUMETSAT's involvement particularly focuses on the integration of AI techniques to improve the usage of satellite data, as well as contribute to a culture of openness and collaboration within the meteorological community.
+
+Summary:
+EUMETNET's AI Programme aims to innovate meteorological applications through collaboration among NMHSs in Europe, leveraging AI and ML for improved weather predictions and analysis. The program focuses on data curation, modeling, and training through workshops to enhance productivity and accuracy in weather services.
+\end{lstlisting}
+
+
+
