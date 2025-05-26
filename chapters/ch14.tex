@@ -16,6 +16,13 @@ We would like to explore the approach to software development known as DevOps an
 
 DevOps is a modern approach to software engineering that fosters close collaboration between development (``Dev'') and operations (``Ops'') teams. The primary goal is to shorten the development lifecycle and increase the frequency and reliability of software releases.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{images/devops1.pdf}
+\caption{The DevOps cycle integrates development and operations through automation and feedback loops. This enhances deployment speed and system reliability.}
+\end{figure}
+
+
 Traditional development and operations workflows were often separated by organizational boundaries: developers wrote the code, and operations teams deployed and maintained it. This led to communication gaps, deployment delays, and quality issues. DevOps bridges this gap through shared responsibilities, continuous feedback loops, and a high degree of automation.
 
 \paragraph{Core Principles of DevOps:}
@@ -43,6 +50,14 @@ DevOps has become a cornerstone of agile software delivery in modern organizatio
 % Extension of DevOps: model handling, data, lifecycle challenges
 
 MLOps (Machine Learning Operations) is the extension of DevOps principles to the field of machine learning. While DevOps focuses on the automation and quality assurance of software development and deployment, MLOps addresses the unique challenges involved in managing machine learning workflows, from data ingestion and model training to deployment, monitoring, and retraining.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{images/mlops_pipeline.pdf}
+  \caption{MLOps extends DevOps by managing not only software but also data and model lifecycles. The diagram shows a typical pipeline with associated goals and challenges.}
+  \label{fig:mlops-pipeline}
+\end{figure}
+
 
 Machine learning systems differ from traditional software in several key aspects. They are not just driven by code but also by data and model parameters. As a result, additional components and responsibilities are introduced into the development and operations lifecycle.
 
@@ -72,16 +87,21 @@ Machine learning systems differ from traditional software in several key aspects
 
 MLOps plays a critical role in bringing machine learning models into production environments in a systematic and controlled way. It ensures that models are not only developed effectively but also maintained, monitored, and updated reliably.
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{images/mlops_roles.png}
+  \caption{Key roles involved in MLOps environments, each contributing to the model lifecycle from experimentation to deployment and monitoring.}
+  \label{fig:mlops-roles}
+\end{figure}
 
-%--------------------------------------------------------------------------------
-%
-%--------------------------------------------------------------------------------
+
 \subsection{Roles in MLOps Environments}
-% Developers, operators, data scientists – responsibilities and interactions
 
-Successful implementation of MLOps requires collaboration among multiple roles with distinct responsibilities. Unlike traditional software projects, ML projects involve both software engineering and data-driven experimentation, which brings together diverse profiles.
+Let us look at the experiences from a countless number of IT projects, putting it into a perspective of our own IT competence and experience! A lot of people realized that the successful implementation of MLOps requires collaboration across multiple roles with distinct yet complementary responsibilities. Unlike traditional software projects, ML initiatives combine software engineering with data-centric experimentation. This interdisciplinary nature brings together diverse profiles that must work in coordination throughout the model lifecycle.
 
-{\bf Key roles in an MLOps team.} A functional MLOps environment brings together people with different but complementary responsibilities. These include:
+
+\noindent
+\textbf{Key roles in an MLOps team} typically include the following:
 
 \begin{itemize}
 	\item \textbf{Data Scientists:} 
@@ -94,19 +114,19 @@ Successful implementation of MLOps requires collaboration among multiple roles w
 	Provide infrastructure, automation, and monitoring tools. They implement CI/CD pipelines, manage cloud or HPC environments, and support system reliability and scalability.
 	
 	\item \textbf{Software Engineers:} 
-	Integrate ML components into larger systems, develop APIs, handle user interfaces, and ensure modularity and maintainability of the overall application.
+	Integrate ML components into broader applications, develop APIs and UIs, and ensure code quality, modularity, and long-term maintainability.
 	
-	\item \textbf{Operations/IT Staff:} 
-	Maintain the underlying infrastructure, including compute clusters, storage, networking, and access control. They ensure security, uptime, and performance of deployed systems.
-	
+	\item \textbf{Operations and IT Staff:} 
+	Maintain and secure the underlying infrastructure, including compute clusters, storage systems, networks, and access control mechanisms.
+
 	\item \textbf{Product Owners and Analysts:} 
-	Define goals, requirements, and metrics for success. They help translate user needs into measurable outcomes and align the ML development with business or scientific objectives.
+	Translate user needs into measurable objectives and success metrics. They guide development priorities and ensure alignment with business or scientific goals.
 \end{itemize}
 
-{\bf Collaboration is Essential.} Effective MLOps requires that these roles communicate and collaborate throughout the lifecycle. Continuous feedback between developers and operators ensures that models are both performant and practical for deployment. A shared responsibility model helps reduce misunderstandings and fosters iterative improvement.
+\noindent
+\textbf{Collaboration is Essential.} Effective MLOps requires ongoing communication and tight feedback loops between these roles. Continuous integration and deployment are not just technical challenges — they are organizational. A shared-responsibility model fosters transparency, reduces misalignment, and supports iterative improvement.
 
-In weather services, these roles often span across different departments -- ranging from research and development to operations and IT -- making well-defined interfaces and automation even more critical.
-
+In weather services and similar domains, these roles are often distributed across departments such as research, operations, and IT. This makes clear interfaces, automation, and reproducible workflows even more critical for success.
 
 %--------------------------------------------------------------------------------
 %
@@ -116,11 +136,19 @@ In weather services, these roles often span across different departments -- rang
 
 Weather services have traditionally operated large-scale, mission-critical systems with strict requirements for availability, reliability, and accuracy. The integration of machine learning into this domain introduces new opportunities -- but also new challenges -- that differ significantly from classical IT environments or typical business-driven ML use cases.
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/mlops_weather.png}
+  \caption{Illustration of MLOps in the context of weather and climate prediction. The pipeline integrates data ingestion, model development, training infrastructure, and forecast delivery in a cohesive operational framework.}
+  \label{fig:mlops-weather}
+\end{figure}
+
+
 {\bf Operational constraints.} Forecasting systems must run on fixed schedules, synchronized with observation and dissemination cycles. Delays or failures can affect downstream warning systems and international data exchange.
 
 {\bf High-performance computing (HPC) environments.} Numerical weather prediction (NWP) relies heavily on tightly optimized HPC systems. ML systems must often be integrated into these environments, which are less flexible than cloud platforms and have strict policies for software deployment.
 
-{\bf Long-established workflows.} Many forecasting systems are built on decades of development and have been refined for performance and stability. These systems often rely on scripting tools, such as {\em BACY} and {\em NUMEX} at DWD, which already enable a partial form of DevOps by automating production chains.
+{\bf Long-established workflows.} Many forecasting systems are built on decades of development and have been refined for performance and stability. These systems often rely on scripting tools, such as {\em BACY} and {\em NUMEX} at DWD, which already enable a partial form of DevOps by automating development and production chains.
 
 {\bf Collaboration across departments.} Development and operations are often split across research units, IT, and forecast offices. This requires particularly clear interfaces and responsibilities when introducing MLOps components.
 
@@ -143,6 +171,16 @@ Machine learning in weather services is therefore not simply a technical extensi
 % Docker, Singularity/Apptainer – motivations, differences, and use cases
 
 Container technologies have become a cornerstone of modern software engineering, enabling reproducibility, portability, and modular deployment across diverse platforms. They are particularly valuable in MLOps, where complex dependencies and hardware constraints can otherwise lead to brittle or non-reproducible systems.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/mlops_containers.png}
+  \caption{Structure and deployment options of a container-based ML inference system. 
+  The container encapsulates the trained model, inference script, and REST API layer, along with all required libraries. It can be deployed on local machines, HPC systems using Singularity/Apptainer, or in cloud infrastructures such as Kubernetes or AWS SageMaker.}
+  \label{fig:mlops-containers}
+\end{figure}
+
+
 
 {\bf What is a container?} A container is a lightweight, isolated environment that packages an application together with all its dependencies -- libraries, tools, runtime, and system settings -- into a single executable unit. Unlike virtual machines, containers share the host operating system kernel, making them more efficient in terms of performance and resource usage.
 
