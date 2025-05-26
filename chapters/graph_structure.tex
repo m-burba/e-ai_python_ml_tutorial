@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb} % <-- Add this
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+
+\begin{document}
+
+\begin{center}
+\begin{preview}
+\begin{tikzpicture}[
+    scale=0.7, transform shape,
+    node distance=1.6cm,
+    every node/.style={font=\sffamily},
+    box/.style={draw, minimum height=1.0cm, minimum width=2.0cm, align=center},
+    arrow/.style={-Stealth, thick},
+    round/.style={circle, draw, minimum size=7mm}
+]
+
+% Nodes (left to right)
+\node[box] (input) {Node\\features};
+\node[box, right=of input] (inputproj) {Linear\\projection};
+\node[box, right=of inputproj] (gnn1) {GNN layer\\$\mathbf{W}_{\text{self}} + \mathbf{W}_{\text{neigh}}$};
+\node[box, right=of gnn1] (gnn2) {GNN layer\\$\mathbf{W}_{\text{gnn}} + \mathbf{W}_{\text{neigh}}$};
+\node[box, right=of gnn2] (output) {Output};
+
+% Arrows
+\draw[arrow] (input) -- (inputproj);
+\draw[arrow] (inputproj) -- (gnn1);
+\draw[arrow] (gnn1) -- (gnn2);
+\draw[arrow] (gnn2) -- (output);
+
+% Input feature vector
+\node[round, above=0.8cm of input] (featurevec) {\tiny$\begin{bmatrix} 0 \\ 1 \end{bmatrix}$};
+\draw[arrow] (featurevec) -- (input);
+
+% Graph neighborhood on top of both GNNs
+\node[round, above=1.6cm of gnn1, xshift=1.6cm] (node1) {2};
+\node[round, above left=0.6cm and 0.8cm of node1] (node2) {};
+\node[round, above right=0.6cm and 0.8cm of node1] (node3) {};
+\draw[arrow] (node2) -- (node1);
+\draw[arrow] (node3) -- (node1);
+\draw[arrow] (node1) -- ++(0,-0.8) -- ++(-1.6,0) -- (gnn1.north);
+\draw[arrow] (node1) -- ++(0,-0.8) -- ++(1.6,0) -- (gnn2.north);
+
+% Comments with matrix sizes
+\node[below=0.4cm of inputproj] {\tiny$\mathbf{W}_\text{in} \in \mathbb{R}^{64 \times 3},\ \mathbf{b}_\text{in} \in \mathbb{R}^{64}$};
+\node[below=0.4cm of gnn1] {\tiny$\mathbf{W}_\text{self} \in \mathbb{R}^{64 \times 64},\ \mathbf{W}_\text{neigh} \in \mathbb{R}^{64 \times 64}$};
+\node[below=0.4cm of gnn2] {\tiny$\mathbf{W}_\text{self} \in \mathbb{R}^{64 \times 64},\ \mathbf{W}_\text{neigh} \in \mathbb{R}^{64 \times 64}$};
+\node[below=0.4cm of output] {\tiny$\mathbf{W}_\text{out} \in \mathbb{R}^{1 \times 64},\ \mathbf{b}_\text{out} \in \mathbb{R}^{1}$};
+
+\end{tikzpicture}
+\end{preview}
+\end{center}
+
+\end{document}
